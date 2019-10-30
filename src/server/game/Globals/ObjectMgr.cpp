@@ -330,8 +330,8 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     {
         Field* fields = result->Fetch();
 
-        uint16 MenuID           = fields[0].GetUInt16();
-        uint16 OptionID         = fields[1].GetUInt16();
+        uint16 MenuID           = fields[0].GetUInt32();
+        uint16 OptionID         = fields[1].GetUInt32();
         std::string LocaleName  = fields[2].GetString();
         std::string OptionText  = fields[3].GetString();
         std::string BoxText     = fields[4].GetString();
@@ -8363,7 +8363,7 @@ void ObjectMgr::LoadGossipMenu()
 
         GossipMenus gMenu;
 
-        gMenu.MenuID        = fields[0].GetUInt16();
+        gMenu.MenuID        = fields[0].GetUInt32();
         gMenu.TextID        = fields[1].GetUInt32();
 
         if (!GetGossipText(gMenu.TextID))
@@ -8404,9 +8404,9 @@ void ObjectMgr::LoadGossipMenuItems()
 
         GossipMenuItems gMenuItem;
 
-        gMenuItem.MenuID                    = fields[0].GetUInt16();
-        gMenuItem.OptionID                  = fields[1].GetUInt16();
-        gMenuItem.OptionIcon                = fields[2].GetUInt32();
+        gMenuItem.MenuID                    = fields[0].GetUInt32();
+        gMenuItem.OptionID                  = fields[1].GetUInt32();
+         gMenuItem.OptionIcon                = fields[2].GetUInt32();
         gMenuItem.OptionText                = fields[3].GetString();
         gMenuItem.OptionBroadcastTextID     = fields[4].GetUInt32();
         gMenuItem.OptionType                = fields[5].GetUInt8();
