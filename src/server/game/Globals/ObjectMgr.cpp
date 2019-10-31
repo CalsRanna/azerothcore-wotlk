@@ -330,8 +330,8 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     {
         Field* fields = result->Fetch();
 
-        uint16 MenuID           = fields[0].GetUInt32();
-        uint16 OptionID         = fields[1].GetUInt32();
+        uint32 MenuID           = fields[0].GetUInt32();
+        uint32 OptionID         = fields[1].GetUInt32();
         std::string LocaleName  = fields[2].GetString();
         std::string OptionText  = fields[3].GetString();
         std::string BoxText     = fields[4].GetString();
