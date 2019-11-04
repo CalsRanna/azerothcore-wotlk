@@ -256,7 +256,7 @@ LfgCompatibility LFGQueue::CheckCompatibility(Lfg5Guids const& checkWith, const 
     LfgRolesMap proposalRoles;
 
     // Check if more than one LFG group and number of players joining
-    uint8 numPlayers = 0;
+    uint8 numPlayers = 4;
     uint8 numLfgGroups = 0;
     uint64 guid;
     uint64 addToFoundMask = 0;
