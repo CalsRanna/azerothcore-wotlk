@@ -21,6 +21,7 @@ docker/worldserver/logs/
 docker/worldserver/data/
 !docker/build
 .env
+apps/joiner
 
 !.gitkeep
 
@@ -59,6 +60,7 @@ nbproject/
 .idea
 cmake-build-debug/*
 cmake-build-debug-coverage/*
+coverage-report/
 
 #
 # Eclipse
