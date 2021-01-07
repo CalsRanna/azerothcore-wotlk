@@ -118,8 +118,8 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     // pussywizard: civilian, non-combat pet or any other NOT HOSTILE TO ANYONE (!)
     if (me->IsMoveInLineOfSightDisabled())
         if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET ||      // nothing more to do, return
-            !who->IsInCombat() ||                                         // if not in combat, nothing more to do
-            !me->IsWithinDist(who, ATTACK_DISTANCE))                      // if in combat and in dist - neutral to all can actually assist other creatures
+                !who->IsInCombat() ||                                         // if not in combat, nothing more to do
+                !me->IsWithinDist(who, ATTACK_DISTANCE))                      // if in combat and in dist - neutral to all can actually assist other creatures
             return;
 
     if (me->CanStartAttack(who))
@@ -249,11 +249,46 @@ bool CreatureAI::_EnterEvadeMode()
     me->SetLootRecipient(nullptr);
     me->ResetPlayerDamageReq();
     me->SetLastDamagedTime(0);
+    me->SetCannotReachTarget(false);
 
     if (me->IsInEvadeMode())
         return false;
 
     return true;
+}
+
+void CreatureAI::MoveCircleChecks()
+{
+    Unit *victim = me->GetVictim();
+
+    if (
+        !victim ||
+        !me->IsFreeToMove() ||
+        !me->IsWithinMeleeRange(victim) ||
+        (victim->GetTypeId() != TYPEID_PLAYER && !victim->IsPet())
+    )
+    {
+        return;
+    }
+
+    me->GetMotionMaster()->MoveCircleTarget(me->GetVictim());
+}
+
+void CreatureAI::MoveBackwardsChecks() {
+    Unit *victim = me->GetVictim();
+
+    if (
+        !victim ||
+        !me->IsFreeToMove() ||
+        (victim->GetTypeId() != TYPEID_PLAYER && !victim->IsPet())
+    )
+    {
+        return;
+    }
+
+    float moveDist = CalculatePct(me->GetCombatReach() + victim->GetCombatReach(), 100);
+
+    me->GetMotionMaster()->MoveBackwards(victim, moveDist);
 }
 
 Creature* CreatureAI::DoSummon(uint32 entry, const Position& pos, uint32 despawnTime, TempSummonType summonType)

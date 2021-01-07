@@ -29,6 +29,7 @@
 #include "DBCStores.h"
 #include "Log.h"
 #include "VMapDefinitions.h"
+#include "GridDefines.h"
 
 using G3D::Vector3;
 
@@ -54,7 +55,7 @@ namespace VMAP
     Vector3 VMapManager2::convertPositionToInternalRep(float x, float y, float z) const
     {
         Vector3 pos;
-        const float mid = 0.5f * 64.0f * 533.33333333f;
+        const float mid = 0.5f * MAX_NUMBER_OF_GRIDS * SIZE_OF_GRIDS;
         pos.x = mid - x;
         pos.y = mid - y;
         pos.z = z;
@@ -95,10 +96,10 @@ namespace VMAP
             std::string mapFileName = getMapFileName(mapId);
             StaticMapTree* newTree = new StaticMapTree(mapId, basePath);
             if (!newTree->InitMap(mapFileName, this))
-			{
-				delete newTree;
+            {
+                delete newTree;
                 return false;
-			}
+            }
             instanceTree = iInstanceMapTrees.insert(InstanceTreeMap::value_type(mapId, newTree)).first;
         }
 
@@ -158,7 +159,7 @@ namespace VMAP
     get the hit position and return true if we hit something
     otherwise the result pos will be the dest pos
     */
-    bool VMapManager2::getObjectHitPos(unsigned int mapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float modifyDist)
+    bool VMapManager2::getObjectHitPos(unsigned int mapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float& ry, float& rz, float modifyDist)
     {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_VMAP_CHECKS)
         if (isLineOfSightCalcEnabled() && !DisableMgr::IsDisabledFor(DISABLE_TYPE_VMAP, mapId, NULL, VMAP_DISABLE_LOS))
@@ -283,7 +284,7 @@ namespace VMAP
         return model->second.getModel();
     }
 
-    void VMapManager2::releaseModelInstance(const std::string &filename)
+    void VMapManager2::releaseModelInstance(const std::string& filename)
     {
         //! Critical section, thread safe access to iLoadedModelFiles
         ACORE_GUARD(ACE_Thread_Mutex, LoadedModelFilesLock);

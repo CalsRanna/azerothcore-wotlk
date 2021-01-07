@@ -28,9 +28,9 @@ endif(WIN32)
 # Find MariaDB for Windows
 if (WIN32)
   # Set know versions MariaDB
-  set(_MARIADB_KNOWN_VERSIONS "MariaDB 10.4" "MariaDB 10.3" "MariaDB 10.2")
+  set(_MARIADB_KNOWN_VERSIONS "MariaDB 10.5" "MariaDB 10.4" "MariaDB 10.3" "MariaDB 10.2")
 
-  # Set default oprions
+  # Set default options
   set(MARIADB_FOUND_LIB 0)
   set(MARIADB_FOUND_INCLUDE 0)
   set(MARIADB_FOUND_EXECUTABLE 0)
@@ -145,15 +145,12 @@ find_path(MYSQL_INCLUDE_DIR
     /usr/local/mysql/include
     "C:/Program Files/MySQL/MySQL Server 8.0/include"
     "C:/Program Files/MySQL/MySQL Server 5.7/include"
-    "C:/Program Files/MySQL/MySQL Server 5.6/include"
     "C:/Program Files/MySQL/include"
     "C:/MySQL/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 8.0;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.7;Location]/include"
-    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 8.0;Location]/include"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.7;Location]/include"
-    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/include"
     "$ENV{ProgramFiles}/MySQL/*/include"
     "$ENV{SystemDrive}/MySQL/*/include"
     "c:/msys/local/include"
@@ -187,21 +184,16 @@ if( WIN32 )
       "C:/Program Files/MySQL/MySQL Server 8.0/lib"
       "C:/Program Files/MySQL/MySQL Server 8.0/lib/opt"
       "C:/Program Files/MySQL/MySQL Server 5.7/lib/opt"
-      "C:/Program Files/MySQL/MySQL Server 5.6/lib/opt"
       "C:/Program Files/MySQL/lib"
       "C:/MySQL/lib/debug"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 8.0;Location]/lib"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 8.0;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.7;Location]/lib"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.7;Location]/lib/opt"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MySQL AB\\MySQL Server 5.6;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 8.0;Location]/lib"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 8.0;Location]/lib/opt"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.7;Location]/lib"
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.7;Location]/lib/opt"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/lib"
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\MySQL AB\\MySQL Server 5.6;Location]/lib/opt"
       "$ENV{ProgramFiles}/MySQL/*/lib/opt"
       "$ENV{SystemDrive}/MySQL/*/lib/opt"
       "c:/msys/local/include"
