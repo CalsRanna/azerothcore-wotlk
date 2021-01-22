@@ -18,5 +18,5 @@ ENTRYPOINT  cd azerothcore/build && \
             MTHREADS=`grep -c ^processor /proc/cpuinfo`; MTHREADS=$(($MTHREADS + 2)) && \
             make -j $MTHREADS && \
             make install -j $MTHREADS && \
-            cp /azeroth-server/bin/worldserver /binworldserver && \
-            cp /azeroth-server/bin/authserver /binauthserver
+            cp -f /azeroth-server/bin/worldserver /binworldserver && \
+            cp -f /azeroth-server/bin/authserver /binauthserver
