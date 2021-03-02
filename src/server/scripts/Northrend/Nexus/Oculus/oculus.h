@@ -5,9 +5,13 @@
 #ifndef DEF_OCULUS_H
 #define DEF_OCULUS_H
 
-#include "SpellScript.h"
-#include "SpellAuras.h"
 #include "SpellAuraEffects.h"
+#include "SpellAuras.h"
+#include "SpellScript.h"
+
+Position const VerdisaPOS = { 949.056f, 1032.97f, 359.967f, 1.035795f };
+Position const BelgaristraszPOS = { 941.355f, 1044.26f,  359.967f, 0.222459f };
+Position const EternosPOS = { 943.202f, 1059.35f, 359.967f, 5.757278f };
 
 Position const VerdisaPOS = { 949.056f, 1032.97f, 359.967f, 1.035795f };
 Position const BelgaristraszPOS = { 941.355f, 1044.26f,  359.967f, 0.222459f };

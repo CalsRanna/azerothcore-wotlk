@@ -10,10 +10,10 @@ SDComment:
 SDCategory: Zul'Aman
 EndScriptData */
 
-#include "ScriptMgr.h"
 #include "ScriptedCreature.h"
-#include "SpellScript.h"
+#include "ScriptMgr.h"
 #include "SpellAuraEffects.h"
+#include "SpellScript.h"
 #include "zulaman.h"
 
 enum Says
@@ -327,7 +327,7 @@ public:
             {
                 Unit* Temp = ObjectAccessor::GetUnit(*me, AddGUID[i]);
                 if (Temp && Temp->IsAlive())
-                    Unit::DealDamage(Temp, Temp, Temp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    Unit::DealDamage(Temp, Temp, Temp->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             }
         }
 
@@ -950,15 +950,13 @@ public:
 
         bool Validate(SpellInfo const* /*spell*/) override
         {
-            if (!sSpellMgr->GetSpellInfo(SPELL_WL_UNSTABLE_AFFL_DISPEL))
-                return false;
-            return true;
+            return ValidateSpellInfo({ SPELL_WL_UNSTABLE_AFFL_DISPEL });
         }
 
         void HandleDispel(DispelInfo* dispelInfo)
         {
             if (Unit* caster = GetCaster())
-                caster->CastSpell(dispelInfo->GetDispeller(), SPELL_WL_UNSTABLE_AFFL_DISPEL, true, NULL, GetEffect(EFFECT_0));
+                caster->CastSpell(dispelInfo->GetDispeller(), SPELL_WL_UNSTABLE_AFFL_DISPEL, true, nullptr, GetEffect(EFFECT_0));
         }
 
         void Register() override

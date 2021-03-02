@@ -4,23 +4,85 @@
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
 
+#include "AccountMgr.h"
+#include "ByteBuffer.h"
+#include "Common.h"
 #include "Cryptography/HMACSHA1.h"
 #include "Cryptography/WardenKeyGeneration.h"
-#include "Common.h"
-#include "WorldPacket.h"
-#include "WorldSession.h"
+#include "Database/DatabaseEnv.h"
 #include "Log.h"
 #include "Opcodes.h"
-#include "ByteBuffer.h"
-#include <openssl/md5.h>
-#include "Database/DatabaseEnv.h"
-#include "World.h"
 #include "Player.h"
 #include "Util.h"
-#include "WardenWin.h"
-#include "WardenModuleWin.h"
 #include "WardenCheckMgr.h"
-#include "AccountMgr.h"
+#include "WardenModuleWin.h"
+#include "WardenWin.h"
+#include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
+#include <openssl/md5.h>
+
+// GUILD is the shortest string that has no client validation (RAID only sends if in a raid group)
+static constexpr char _luaEvalPrefix[] = "local S,T,R=SendAddonMessage,function()";
+static constexpr char _luaEvalMidfix[] = " end R=S and T()if R then S('_TW',";
+static constexpr char _luaEvalPostfix[] = ",'GUILD')end";
+
+static_assert((sizeof(_luaEvalPrefix)-1 + sizeof(_luaEvalMidfix)-1 + sizeof(_luaEvalPostfix)-1 + WARDEN_MAX_LUA_CHECK_LENGTH) == 255);
+
+static constexpr uint8 GetCheckPacketBaseSize(uint8 type)
+{
+    switch (type)
+    {
+    case DRIVER_CHECK:
+    case MPQ_CHECK: return 1;
+    case LUA_EVAL_CHECK: return 1 + sizeof(_luaEvalPrefix) - 1 + sizeof(_luaEvalMidfix) - 1 + 4 + sizeof(_luaEvalPostfix) - 1;
+    case PAGE_CHECK_A: return (4 + 1);
+    case PAGE_CHECK_B: return (4 + 1);
+    case MODULE_CHECK: return (4 + SHA_DIGEST_LENGTH);
+    case MEM_CHECK: return (1 + 4 + 1);
+    default: return 0;
+    }
+}
+
+static uint16 GetCheckPacketSize(WardenCheck const* check)
+{
+    if (!check)
+    {
+        return 0;
+    }
+
+    uint16 size = 1 + GetCheckPacketBaseSize(check->Type); // 1 byte check type
+    if (!check->Str.empty())
+    {
+        size += (static_cast<uint16>(check->Str.length()) + 1); // 1 byte string length
+    }
+
+    BigNumber tempNumber = check->Data;
+    if (!tempNumber.GetNumBytes())
+    {
+        size += tempNumber.GetNumBytes();
+    }
+    return size;
+}
+
+// Returns config id for specific type id
+static WorldIntConfigs GetMaxWardenChecksForType(uint8 type)
+{
+    // Should never be higher type than defined
+    ASSERT(type < MAX_WARDEN_CHECK_TYPES);
+
+    switch (type)
+    {
+    case WARDEN_CHECK_MEM_TYPE:
+        return CONFIG_WARDEN_NUM_MEM_CHECKS;
+    case WARDEN_CHECK_LUA_TYPE:
+        return CONFIG_WARDEN_NUM_LUA_CHECKS;
+    default:
+        break;
+    }
+
+    return CONFIG_WARDEN_NUM_OTHER_CHECKS;
+}
 
 // GUILD is the shortest string that has no client validation (RAID only sends if in a raid group)
 static constexpr char _luaEvalPrefix[] = "local S,T,R=SendAddonMessage,function()";

@@ -7,19 +7,20 @@
 #ifndef SC_SCRIPTMGR_H
 #define SC_SCRIPTMGR_H
 
+#include "AchievementMgr.h"
+#include "ArenaTeam.h"
+#include "AuctionHouseMgr.h"
+#include "Battleground.h"
 #include "Common.h"
-#include "ObjectMgr.h"
 #include "DBCStores.h"
+#include "DynamicObject.h"
+#include "GameEventMgr.h"
+#include "ObjectMgr.h"
+#include "PetDefines.h"
 #include "QuestDef.h"
 #include "SharedDefines.h"
-#include "World.h"
 #include "Weather.h"
-#include "AchievementMgr.h"
-#include "DynamicObject.h"
-#include "ArenaTeam.h"
-#include "GameEventMgr.h"
-#include "PetDefines.h"
-#include "AuctionHouseMgr.h"
+#include "World.h"
 #include <atomic>
 
 class AuctionHouseObject;
@@ -308,7 +309,7 @@ public:
             sLog->outError("Invalid MapScript for %u; no such map ID.", _mapId);
     }
 
-    // Gets the MapEntry structure associated with this script. Can return NULL.
+    // Gets the MapEntry structure associated with this script. Can return nullptr.
     MapEntry const* GetEntry() { return _mapEntry; }
 
     // Called when the map is created.
@@ -430,7 +431,7 @@ public:
     virtual void OnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) { }
 
     // Called when DoT's Tick Damage is being Dealt
-    // Attacker can be NULL if he is despawned while the aura still exists on target
+    // Attacker can be nullptr if he is despawned while the aura still exists on target
     virtual void ModifyPeriodicDamageAurasTick(Unit* /*target*/, Unit* /*attacker*/, uint32& /*damage*/) { }
 
     // Called when Melee Damage is being Dealt
@@ -744,6 +745,9 @@ protected:
 public:
     virtual void OnPlayerReleasedGhost(Player* /*player*/) { }
 
+    // Called when a player does a desertion action (see BattlegroundDesertionType)
+    virtual void OnBattlegroundDesertion(Player* /*player*/, BattlegroundDesertionType const /*desertionType*/) { }
+
     // Called when a player completes a quest
     virtual void OnPlayerCompleteQuest(Player* /*player*/, Quest const* /*quest_id*/) { }
 
@@ -936,6 +940,7 @@ public:
     virtual void OnFirstLogin(Player* /*player*/) { }
 
     virtual bool CanJoinInBattlegroundQueue(Player* /*player*/, uint64 /*BattlemasterGuid*/, BattlegroundTypeId /*BGTypeID*/, uint8 /*joinAsGroup*/, GroupJoinBattlegroundResult& /*err*/) { return true; }
+    virtual bool ShouldBeRewardedWithMoneyInsteadOfExp(Player* /*player*/) { return false; }
 
     // Called before the player's temporary summoned creature has initialized it's stats
     virtual void OnBeforeTempSummonInitStats(Player* /*player*/, TempSummon* /*tempSummon*/, uint32& /*duration*/) { }
@@ -1393,7 +1398,9 @@ public: /* PlayerScript */
     void OnBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);
     void OnFirstLogin(Player* player);
     void OnPlayerCompleteQuest(Player* player, Quest const* quest);
+    void OnBattlegroundDesertion(Player* player, BattlegroundDesertionType const desertionType);
     bool CanJoinInBattlegroundQueue(Player* player, uint64 BattlemasterGuid, BattlegroundTypeId BGTypeID, uint8 joinAsGroup, GroupJoinBattlegroundResult& err);
+    bool ShouldBeRewardedWithMoneyInsteadOfExp(Player* player);
     void OnBeforeTempSummonInitStats(Player* player, TempSummon* tempSummon, uint32& duration);
     void OnBeforeGuardianInitStatsForLevel(Player* player, Guardian* guardian, CreatureTemplate const* cinfo, PetType& petType);
     void OnAfterGuardianInitStatsForLevel(Player* player, Guardian* guardian);
