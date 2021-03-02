@@ -67,6 +67,9 @@ bool PathGenerator::CalculatePath(float destX, float destY, float destZ, bool fo
     return CalculatePath(x, y, z, destX, destY, destZ, forceDest);
 }
 
+    return CalculatePath(x, y, z, destX, destY, destZ, forceDest);
+}
+
 bool PathGenerator::CalculatePath(float x, float y, float z, float destX, float destY, float destZ, bool forceDest)
 {
     if (!acore::IsValidMapCoord(destX, destY, destZ) || !acore::IsValidMapCoord(x, y, z))
@@ -181,9 +184,6 @@ G3D::Vector3 ClosestPointOnLine(const G3D::Vector3& a, const G3D::Vector3& b, co
     float startPoint[VERTEX_SIZE] = { startPos.y, startPos.z, startPos.x };
     float endPoint[VERTEX_SIZE] = { endPos.y, endPos.z, endPos.x };
 
-    // get the distance to move from point a
-    v *= t;
-
     // move from point a to the nearest point on the segment
     return a + v;
 }
@@ -202,6 +202,8 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
 {
     bool endInWaterFar = false;
     bool cutToFirstHigher = false;
+
+    Creature const* creature = _source->ToCreature();
 
     Creature const* creature = _source->ToCreature();
 
@@ -257,14 +259,6 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
                 buildShotrcut = true;
             }
         }
-
-                // if both points are in water
-                if (LIQUID_MAP_NO_WATER != _sourceUnit->GetBaseMap()->getLiquidStatus(startPos.x, startPos.y, startPos.z, MAP_ALL_LIQUIDS, nullptr))
-                {
-                    BuildShortcut();
-                    _type = PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH);
-                    return;
-                }
 
                 endInWaterFar = true;
             }
@@ -572,6 +566,14 @@ void PathGenerator::BuildPolyPath(G3D::Vector3 const& startPos, G3D::Vector3 con
         return;
     }
 
+    if (!_polyLength)
+    {
+        sLog->outError("PathGenerator::BuildPolyPath: %lu Path Build failed: 0 length path", _source->GetGUID());
+        BuildShortcut();
+        _type = PATHFIND_NOPATH;
+        return;
+    }
+
     // by now we know what type of path we can get
     if (_pathPolyRefs[_polyLength - 1] == endPoly && !(_type & PATHFIND_INCOMPLETE))
     {
@@ -761,6 +763,9 @@ void PathGenerator::UpdateFilter()
                 _source->GetPositionY(),
                 _source->GetPositionZ());
 
+            _filter.setIncludeFlags(includedFlags);
+        }
+
         _filter.setIncludeFlags(includedFlags);
     }
 }
@@ -902,6 +907,18 @@ dtStatus PathGenerator::FindSmoothPath(float const* startPos, float const* endPo
 
     if (DT_SUCCESS != _navMeshQuery->closestPointOnPolyBoundary(polys[npolys - 1], endPos, targetPos))
         return DT_FAILURE;
+
+        if (dtStatusFailed(_navMeshQuery->closestPointOnPolyBoundary(polys[npolys - 1], endPos, targetPos)))
+        {
+            return DT_FAILURE;
+        }
+    }
+    else
+    {
+        // Case where the path is on the same poly
+        dtVcopy(iterPos, startPos);
+        dtVcopy(targetPos, endPos);
+    }
 
     dtVcopy(&smoothPath[nsmoothPath * VERTEX_SIZE], iterPos);
     nsmoothPath++;

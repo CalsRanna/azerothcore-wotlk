@@ -575,7 +575,10 @@ bool Unit::IsWithinMeleeRange(const Unit* obj, float dist) const
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 28f1dc5c0cc0d3ce26bb64bfc4475329fb5166c2
 float Unit::GetMeleeRange(Unit const* target) const
 {
     float range = GetCombatReach() + target->GetCombatReach() + 4.0f / 3.0f;
